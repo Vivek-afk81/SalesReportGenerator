@@ -25,6 +25,7 @@ PRODUCT_DATA = {
     "P010": ["External Hard Drive", 100, "Storage", "Western Digital", 50000, 4.5],
 
 }
+
  # reads the product ids from the text file
 def read_product_ids(input_file="product_sales.txt"):
     try:
@@ -36,6 +37,7 @@ def read_product_ids(input_file="product_sales.txt"):
         return []
     
 # this function will process transactions and will return a structured data
+
 def process_transactions(product_ids):
     csv_data=[]
     current_date=datetime.date.today().strftime("%Y-%m-%d")
