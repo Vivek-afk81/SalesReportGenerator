@@ -1,0 +1,30 @@
+[
+  {
+    "run_id": "20260411_210004",
+    "timestamp": "2026-04-11T21:00:04",
+    "source_name": "test_data_2.txt",
+    "channel": "dashboard",
+    "rows_uploaded": 333,
+    "valid_rows": 333,
+    "invalid_rows": 0,
+    "duplicate_entries": 323,
+    "empty_lines": 0,
+    "transactions": 333,
+    "revenue": 24680.0,
+    "at_risk_count": 5
+  },
+  {
+    "run_id": "20260411_205944",
+    "timestamp": "2026-04-11T20:59:44",
+    "source_name": "test_data_1.txt",
+    "channel": "dashboard",
+    "rows_uploaded": 333,
+    "valid_rows": 333,
+    "invalid_rows": 0,
+    "duplicate_entries": 323,
+    "empty_lines": 0,
+    "transactions": 333,
+    "revenue": 28295.0,
+    "at_risk_count": 5
+  }
+]
