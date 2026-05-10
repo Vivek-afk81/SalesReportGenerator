@@ -1,0 +1,237 @@
+
+# SalesLens — Project TODO
+
+# Started     : 2026-05-10
+# Goal        : DS internship portfolio project
+# Stack       : Python, Streamlit, FastAPI, SQLite, scikit-learn, 
+#               transformers, PyTorch, Prophet
+# Dataset     : UCI Online Retail II (v0), Instacart (v1), Olist (v1.5)
+
+
+
+
+# CURRENT STATUS
+
+# Phase       : Research & Design (pre-code)
+# Next action : Open Colab, load UCI dataset, validate data assumptions
+
+
+
+
+# DESIGN DECISIONS — LOCKED
+
+# [x] Product name        : SalesLens — AI Inventory Intelligence
+# [x] Target user         : Retail analyst / DS internship demo
+# [x] Core problem        : Surface non-obvious signals in retail transaction
+#                           data that manual inspection misses
+# [x] Product mode 1      : Upload mode — user brings their own .txt/.csv
+# [x] Product mode 2      : Demo mode — one click loads UCI dataset silently,
+#                           full pipeline runs, real insights appear in <5s
+# [x] Scenario B sim      : Time-window stepping through UCI weekly snapshots
+#                           to simulate "daily operations" feel
+# [x] Data strategy       : UCI Online Retail II as v0 foundation
+#                           No live API needed for demo mode
+# [x] Wow moment          : Plain-English insight sentence generated from 
+#                           3 DS components before any charts appear
+# [x] Dev workflow        : Research + validate in Colab first,
+#                           integrate in VS Code only when satisfied
+# [x] Versioning          : v0 Retail / v1 Grocery / v1.5 Electronics
+
+
+
+# CORE DS SIGNALS — LOCKED
+
+# [x] Signal 1 : Market basket analysis
+#                Products quietly bought together
+#                Method : FP-Growth (mlxtend)
+#                Output : Association rules with support, confidence, lift
+#
+# [x] Signal 2 : Stockout velocity detection  
+#                Fast sellers with frequent stockout gaps
+#                Method : Isolation Forest (scikit-learn)
+#                Output : Per-product risk score and velocity vs restock rate
+#
+# [x] Signal 3 : Temporal demand anomaly
+#                Categories showing unusual demand spikes by week
+#                Method : Rolling mean + Z-score or STL decomposition
+#                Output : Flagged weeks per category with deviation score
+
+
+
+# PHASE 0 — DATA VALIDATION (Colab)
+
+# Goal : Confirm UCI dataset supports all 3 DS signals before building
+#        anything. No assumptions — verify against real data.
+#
+# [ ] Load UCI Online Retail II via ucimlrepo in Colab
+# [ ] Inspect schema — confirm all 8 columns present and clean
+# [ ] Check basket structure — how many unique InvoiceNos, avg basket size
+# [ ] Check product coverage — unique StockCodes, description quality
+# [ ] Check temporal spread — date range, weekly transaction volume
+# [ ] Check data quality — nulls, cancellations (InvoiceNo starting with C),
+#     negative quantities, zero prices
+# [ ] Confirm Signal 1 feasibility — enough multi-item baskets for FP-Growth
+# [ ] Confirm Signal 2 feasibility — enough per-product transaction frequency
+#     to compute meaningful velocity
+# [ ] Confirm Signal 3 feasibility — enough weekly variance per category
+#     to detect anomalies
+# [ ] Define weekly snapshot boundaries for time-window simulation
+# [ ] Document findings — what works, what needs adjustment, any surprises
+
+
+
+
+# PHASE 1 — COMPONENT RESEARCH (Colab)
+
+# Each component validated independently before integration.
+# Move to next only when current one produces satisfying results.
+#
+# [ ] COMPONENT A : Market Basket Analysis
+#     [ ] Clean and filter UCI data for MBA — remove cancellations,
+#         negative quantities, missing CustomerIDs
+#     [ ] Build basket matrix from InvoiceNo + StockCode
+#     [ ] Run FP-Growth with varying min_support thresholds
+#     [ ] Generate association rules, inspect confidence + lift distribution
+#     [ ] Filter for non-obvious rules (exclude trivially correlated items)
+#     [ ] Validate output quality — do the rules make retail sense?
+#     [ ] Export clean pattern : data prep → model → rules → output dict
+#
+# [ ] COMPONENT B : Stockout Velocity Detection
+#     [ ] Compute per-product daily sales velocity from UCI transactions
+#     [ ] Infer stockout gaps — periods of zero sales for active products
+#     [ ] Engineer features : avg_velocity, gap_frequency, gap_duration,
+#         velocity_variance
+#     [ ] Fit Isolation Forest, tune contamination parameter
+#     [ ] Validate flagged products — do they make intuitive sense?
+#     [ ] Export clean pattern : feature engineering → model → risk scores
+#
+# [ ] COMPONENT C : Temporal Demand Anomaly
+#     [ ] Aggregate UCI transactions by week and category
+#     [ ] Compute rolling mean and standard deviation per category
+#     [ ] Apply Z-score threshold or STL decomposition to flag anomalous weeks
+#     [ ] Validate flagged periods against known UCI date range events
+#     [ ] Export clean pattern : aggregation → decomposition → anomaly flags
+#
+# [ ] COMPONENT D : Insight Sentence Generator
+#     [ ] Define template system for plain-English summary sentence
+#     [ ] Wire outputs from A, B, C into template slots
+#     [ ] Validate sentence reads naturally across different data slices
+#     [ ] Test edge cases — what if no anomalies detected, what if all
+#         products flagged
+
+
+
+
+# PHASE 2 — CORE REFACTOR (VS Code)
+
+# Only starts after all Colab components are validated.
+#
+# [ ] Create clean project structure
+#     [ ] core/__init__.py
+#     [ ] core/catalog.py
+#     [ ] core/pipeline.py
+#     [ ] core/alerts.py
+# [ ] Replace hardcoded PRODUCT_DATA with UCI-derived catalog
+# [ ] Build data ingestion layer for UCI dataset
+# [ ] Build weekly snapshot pre-computation script
+# [ ] Replace history_store.py JSON persistence with SQLite via SQLAlchemy
+# [ ] Write pytest tests for all core functions (minimum 10 tests)
+# [ ] Add type hints throughout
+
+
+
+
+# PHASE 3 — AI INTEGRATION (VS Code)
+
+# Port validated Colab components into production modules.
+#
+# [ ] ai/__init__.py
+# [ ] ai/basket.py          — FP-Growth integration from Component A
+# [ ] ai/velocity.py        — Isolation Forest integration from Component B
+# [ ] ai/demand.py          — Temporal anomaly integration from Component C
+# [ ] ai/insights.py        — Insight sentence generator from Component D
+# [ ] Integration test — run full pipeline on UCI data end to end
+# [ ] Validate outputs match Colab results exactly
+
+
+
+
+# PHASE 4 — FASTAPI BACKEND (VS Code)
+
+# [ ] api/main.py           — app entry point
+# [ ] api/routes/run.py     — POST /run, GET /runs
+# [ ] api/routes/demo.py    — GET /demo/{week_window}
+# [ ] api/routes/insights.py — GET /insights/{run_id}
+# [ ] Streamlit app.py calls API endpoints only — no direct core imports
+# [ ] CLI calls core directly — no API dependency
+
+
+
+
+# PHASE 5 — PRODUCT (VS Code + Streamlit)
+
+# [ ] Landing experience
+#     [ ] Two entry points — Upload mode and Demo mode
+#     [ ] Demo mode button triggers UCI pipeline silently
+#     [ ] Insight sentence appears within 5 seconds
+# [ ] Demo mode dashboard
+#     [ ] Insight summary sentence at top
+#     [ ] Basket Intelligence section — co-purchase rules table/graph
+#     [ ] Velocity & Stockout Risk section — ranked product risk table
+#     [ ] Demand Pulse section — category time series with flagged weeks
+#     [ ] Time-window stepper — step through weekly UCI snapshots
+# [ ] Upload mode dashboard
+#     [ ] Same layout as demo mode
+#     [ ] Runs on user-provided data instead of UCI
+# [ ] Export — CSV, JSON, Excel for all insight outputs
+
+
+
+
+# PHASE 6 — POLISH & DEPLOYMENT
+
+# [ ] Write 5 more pytest tests covering AI components
+# [ ] README.md — project overview, architecture, how to run, demo link
+# [ ] Add demo GIF to README showing the wow moment
+# [ ] Deploy to Streamlit Cloud — get public URL
+# [ ] requirements.txt — pinned versions
+# [ ] .gitignore — exclude database, logs, __pycache__, .env
+# [ ] Review all code for type hints, docstrings, clean naming
+
+
+
+
+# FUTURE — v1 GROCERY (Instacart + Open Food Facts)
+
+# [ ] Load Instacart dataset in Colab
+# [ ] Validate basket structure and reorder patterns
+# [ ] Enrich product metadata via Open Food Facts API
+#     — join on product name fuzzy matching using sentence embeddings
+#     — this is where transformers knowledge gets used directly
+# [ ] Extend pipeline to handle grocery-specific signals
+#     — reorder frequency analysis
+#     — perishable demand patterns
+# [ ] Add domain toggle to dashboard — Retail / Grocery
+
+
+
+
+# FUTURE — v1.5 ELECTRONICS (Olist + Best Buy API)
+
+# [ ] Load Olist dataset in Colab
+# [ ] Validate electronics category coverage
+# [ ] Register for Best Buy developer API key
+# [ ] Pull live electronics pricing and availability data
+# [ ] Extend pipeline for electronics-specific signals
+#     — price volatility detection
+#     — demand spikes around product launches
+#     — brand competition analysis
+# [ ] Add Electronics domain to dashboard toggle
+
+
+
+
+
+
+
+
